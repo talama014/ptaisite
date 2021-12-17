@@ -18,8 +18,11 @@ class Room (models.Model):
     host = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True)
     description = models.TextField(null=True, blank=True)
-    update = models.TimeField(auto_now = True)
-    create = models.TimeField(auto_now_add=True)
+    updated = models.TimeField(auto_now = True)
+    created = models.TimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-updated', '-created']
 
     def __str__(self):
         return self.name
@@ -27,8 +30,8 @@ class Message(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     body = models.TextField()
-    update = models.TimeField(auto_now = True)
-    create = models.TimeField(auto_now_add=True)
+    updated = models.TimeField(auto_now = True)
+    created = models.TimeField(auto_now_add=True)
 
     def __str__(self):
         return self.body[0:50]
