@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.http import request
 from django.shortcuts import redirect, render
 from django.db.models import Q
-from .models import Room, Topic
+from .models import Message, Room, Topic
 from .forms import RoomForm
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -73,8 +73,18 @@ def home(request):
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    messages = room.message_set.all()
-    context = {'room': room, 'messages': messages}        
+    room_messages = room.message_set.all().order_by('-created')
+    paticipants = room.paticipants.all()
+
+    if request.method == 'POST':
+        room_messages = Message.objects.create(
+            user = request.user,
+            room = room,
+            body = request.POST.get('body')
+        )
+        room.paticipants.add(request.user)
+        return redirect('room', pk=room.id)
+    context = {'room': room, 'room_messages': room_messages, 'paticipants': paticipants}        
     return render(request, 'base/room.html', context)
 
 @login_required(login_url='/login')
@@ -92,7 +102,7 @@ def createRoom(request):
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
-
+    
     if request.user != room.host:
         return HttpResponse('You are not owner of this room!!')
 
@@ -114,3 +124,13 @@ def deleteRoom(request, pk):
         room.delete()
         return redirect('home')
     return render(request, 'base/delete.html', {'obj':room})        
+
+@login_required(login_url='/login')
+def deleteMessage(request, pk):
+    messages = Message.objects.get(id=pk) 
+    if request.user != messages.user:
+        return HttpResponse('You are not owner of this room!!')
+    if request.method == 'POST':
+        messages.delete()
+        return redirect('room', pk = messages.room.id)
+    return render(request, 'base/delete.html', {'obj':messages})
