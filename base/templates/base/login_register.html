@@ -13,8 +13,8 @@
 
         <input type="submit" value="Login">
     </form>
-    <p>haven't sign up yet?</p>
-    <a href="{% url 'register' %}"> Sign up </a>
+    <p>Bạn chưa đăng kí?</p>
+    <a href="{% url 'register' %}"> Đăng kí </a>
 </div>
 {% else %}
 <div>
@@ -23,8 +23,8 @@
         {{ form.as_p}}
         <input type="submit" value="Register"/>
     </form>
-    <p>Already sign up?</p>
-    <a href="{% url 'login' %}"> Login </a>
+    <p>Đã có tài khoản?</p>
+    <a href="{% url 'login' %}"> Đâng nhập </a>
 </div>
 {% endif %}
 {% endblock content %}

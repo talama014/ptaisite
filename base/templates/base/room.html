@@ -12,15 +12,14 @@
         <h1> {{ room.name }} </h1> 
         <p>{{room.description}}</p>
         <div class="comment-wrapper">
-            <h3>Conversation</h3>
+            <h3>Bình luận</h3>
             <hr>
             {% for message in room_messages%}
                 <div>
-                    
-                    <small>@{{message.user}} {{message.created|timesince}} ago</small>
+                    <small>@{{message.user}} {{message.created|timesince}} trước</small>
                     <p>{{message.body}}</p>
                     {% if request.user == message.user%}
-                    <a href="{% url 'delete-message' message.id %}">Delete</a>
+                    <a href="{% url 'delete-message' message.id %}">Xóa</a>
                     {% endif %}
                     <hr>
                 </div>
@@ -30,13 +29,13 @@
         <div class="comment-form">
             <form method="POST" action="">
                 {% csrf_token %}
-                <input type="text" name="body" placeholder="Write your comment here..."/>
+                <input type="text" name="body" placeholder="Viết bình luận ở đây..."/>
             </form>
         </div>
         {% endif %}
     </div>
     <div>
-        <h2>Paticipants</h2>
+        <h2>Người đã tham gia</h2>
         <hr>
         {% for user in paticipants%}
         <div>
